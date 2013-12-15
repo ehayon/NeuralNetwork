@@ -127,12 +127,17 @@ class NeuralNetwork
   end
 
   def test(examples)
+    good = 0.0
     examples.each do |example|
-      puts "#{example[1]} => #{predict(example[0])}"
+      arr = predict(example[0])
+      arr.map! { |val| (val==arr.max)? 1 : 0 } 
+      good = good + 1 if(arr == example[1])
+      puts "#{example[1]} => #{arr} [#{arr == example[1] ? "OK" : "BAD"}]"
     end
+    puts "Training accuracy = #{good/examples.length}"
   end
 
-  def train(examples)
+  def train(examples, iteration, file)
     epoch = 0
     error = 1.0
     while error > 0.1
@@ -143,7 +148,8 @@ class NeuralNetwork
         error = error + backprop(ex[1])
       end
       if epoch % 1 == 0
-        puts "Error: #{error}"
+        puts "#{iteration} | error: #{error}"
+        file.write("#{iteration},#{epoch},#{error}\n")
       end
     end
   end
