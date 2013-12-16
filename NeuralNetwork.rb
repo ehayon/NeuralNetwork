@@ -3,10 +3,12 @@ require 'pp'
 class NeuralNetwork
 
   def self.activation(x)
+    # Sigmoid activation function
     1.0/(1.0+Math.exp(-1.0 * x)) 
   end
 
   def self.activation_derivative(x) 
+    # Derivative of the sigmoid activation function
     self.activation(x) * (1.0-self.activation(x))
   end
   
@@ -80,7 +82,6 @@ class NeuralNetwork
 
   end
     
-
   def backprop(desired_output)
     # compute error at the output nodes
     delta_output = [0.0] * @outputNodes
@@ -137,10 +138,10 @@ class NeuralNetwork
     puts "Training accuracy = #{good/examples.length}"
   end
 
-  def train(examples, iteration, file)
+  def train(examples, iteration, file, file_epochs)
     epoch = 0
     error = 1.0
-    while error > 0.1
+    while error > 0.01
       error = 0.0
       epoch = epoch + 1
       examples.each do |ex|
@@ -149,9 +150,12 @@ class NeuralNetwork
       end
       if epoch % 1 == 0
         puts "#{iteration} | error: #{error}"
-        file.write("#{iteration},#{epoch},#{error}\n")
+        file.write("#{epoch},#{error},#{iteration}\n")
+        file.flush
       end
     end
+    file_epochs.write("#{iteration},#{epoch}\n")
+    file_epochs.flush
   end
   
 end

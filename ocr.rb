@@ -1,6 +1,6 @@
 require './NeuralNetwork'
 
-net = NeuralNetwork.new(256, 22, 10, 0.2, 0.4)
+net = NeuralNetwork.new(256, 40, 10, 0.1, 0.8)
 
 matrix = IO.readlines('numbers.data').map { |line| line.split.map(&:to_i) }
 training_data = []
@@ -10,11 +10,13 @@ matrix.each do |row|
 end
 
 File.open('training_results.txt', 'w') do |file|
-  20.times do |iter|
-    pp net.train(training_data.sample(40), iter, file)
+  File.open('training_epochs.txt', 'w') do |file_epochs|
+    20.times do |iter|
+      pp net.train(training_data.sample(60), iter, file, file_epochs)
+    end
   end
 end
 
 
-net.test(training_data.sample(100))
+net.test(training_data.sample(500))
 
